@@ -5,6 +5,7 @@ import source from "vinyl-source-stream";
 import connect from "gulp-connect";
 import open from "gulp-open";
 import lint from "gulp-eslint";
+import concat from "gulp-concat";
 
 gulp.task("connect", () => {
     connect.server({
@@ -45,11 +46,19 @@ gulp.task("js", ["lint"], () => {
         .pipe(connect.reload());
 });
 
-gulp.task("watch", ()=>{
-    gulp.watch("./src/**/*.js", ["js"]);
-gulp.watch("./src/**/*.html", ["html"]);
+gulp.task("css", ()=>{
+   gulp.src(["./node_modules/bootstrap/dist/css/*.min.css", "./src/css/**/*.css"])
+       .pipe(concat("bundle.css"))
+       .pipe(gulp.dest("./dist/css/"))
+       .pipe(connect.reload());
 });
 
-gulp.task("default", ["html", "js", "connect", "open", "watch"], () => {
+gulp.task("watch", ()=>{
+    gulp.watch("./src/**/*.js", ["js"]);
+    gulp.watch("./src/**/*.html", ["html"]);
+    gulp.watch("./src/**/*.css", ["css"]);
+});
+
+gulp.task("default", ["html", "js", "css", "connect", "open", "watch"], () => {
     console.log("DONE");
 });
